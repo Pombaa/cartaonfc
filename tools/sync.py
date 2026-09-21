@@ -106,6 +106,7 @@ def sync_ascii(cfg):
         gamma=ascii_cfg["gamma"],
         invert=ascii_cfg["invert"],
         crop=ascii_cfg["crop"],
+        char_aspect=ascii_cfg.get("char_aspect"),
     )
     for w in warnings:
         print(f"[ascii][aviso] {w}")

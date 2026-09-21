@@ -115,6 +115,8 @@ def build_portrait(cfg):
     return (
         '\n  <div class="portrait" id="portrait">\n'
         '    <div class="portrait-slot" id="portrait-slot">\n'
+        '      <pre class="portrait-ascii portrait-ascii--blur" id="portrait-ascii-blur"\n'
+        '        aria-hidden="true" hidden></pre>\n'
         '      <pre class="portrait-ascii" id="portrait-ascii" role="img" hidden\n'
         f'        data-aria-pt="{ascii_pt}"\n'
         f'        data-aria-en="{ascii_en}"></pre>\n'
@@ -125,15 +127,8 @@ def build_portrait(cfg):
         f'        <span class="portrait-initials">{initials}</span>\n'
         "      </div>\n"
         "    </div>\n"
-        "  </div>\n"
-        "  "
-    )
-
-
-def build_identity(cfg):
-    return (
-        '\n    <div class="identity">\n'
-        f'      <h1>{esc(cfg["display_name"])}</h1>\n'
+        '    <div class="name-block">\n'
+        f"      <h1>{esc(name)}</h1>\n"
         '      <p class="role">\n'
         f'        <span data-i18n="pt">{esc(cfg["role"]["pt"])}</span>'
         f'<span data-i18n="en" hidden>{esc(cfg["role"]["en"])}</span>\n'
@@ -143,8 +138,16 @@ def build_identity(cfg):
         f'<span data-i18n="en" hidden>{esc(cfg["location"]["en"])}</span>\n'
         "      </p>\n"
         "    </div>\n"
-        "    "
+        "  </div>\n"
+        "  "
     )
+
+
+def build_identity(cfg):
+    # Nome/cargo/local ficam no overlay .name-block dentro de .portrait
+    # (mesmo padrão do cartão de referência). Marcador sync permanece vazio.
+    return "\n    "
+
 
 
 def build_bio(cfg):

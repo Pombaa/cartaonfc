@@ -78,11 +78,24 @@ def quality_warnings(gray_img):
     return warnings
 
 
-def image_to_ascii(image_path, cols=100, contrast=1.0, gamma=1.0, invert=False, crop=None):
-    """Returns (ascii_text, warnings)."""
+def _load_rgb(image_path):
+    """Open image as RGB. Some exports (e.g. ChatGPT PNG) put the portrait
+    only in the alpha channel with near-black RGB — promote alpha to luma."""
     img = Image.open(image_path)
     img = ImageOps.exif_transpose(img)
-    img = img.convert("RGB")
+    if img.mode == "RGBA":
+        r, g, b, a = img.split()
+        # If RGB is essentially empty, the drawing lives in alpha.
+        if max(ImageStat.Stat(r).mean[0], ImageStat.Stat(g).mean[0], ImageStat.Stat(b).mean[0]) < 2.0:
+            return Image.merge("RGB", (a, a, a))
+        bg = Image.new("RGBA", img.size, (0, 0, 0, 255))
+        return Image.alpha_composite(bg, img).convert("RGB")
+    return img.convert("RGB")
+
+
+def image_to_ascii(image_path, cols=100, contrast=1.0, gamma=1.0, invert=False, crop=None, char_aspect=None):
+    """Returns (ascii_text, warnings)."""
+    img = _load_rgb(image_path)
 
     warnings = []
     if crop:
@@ -103,7 +116,8 @@ def image_to_ascii(image_path, cols=100, contrast=1.0, gamma=1.0, invert=False, 
         gray = ImageEnhance.Contrast(gray).enhance(contrast)
 
     src_w, src_h = gray.size
-    rows = max(1, round((src_h / src_w) * cols * CHAR_ASPECT))
+    aspect = CHAR_ASPECT if char_aspect is None else char_aspect
+    rows = max(1, round((src_h / src_w) * cols * aspect))
     small = gray.resize((cols, rows), Image.LANCZOS)
 
     pixels = small.load()
@@ -124,7 +138,7 @@ def image_to_ascii(image_path, cols=100, contrast=1.0, gamma=1.0, invert=False, 
             if invert:
                 idx = ramp_last - idx
             row_chars.append(RAMP[idx])
-        lines.append("".join(row_chars).rstrip())
+        lines.append("".join(row_chars))
 
     ascii_text = "\n".join(lines)
     if not ascii_text.strip():

@@ -15,7 +15,16 @@
     "pt": "Desenvolvedor Full Stack com experiência em React, Next.js, Node.js, NestJS, PHP e Python. Construo APIs REST, integrações entre sistemas e otimizo bancos MySQL, documentando com Swagger e Postman. Também atuo em infraestrutura: Linux (Arch), Docker, VPN, servidores e automação, da camada de aplicação ao deploy, com Git, CI/CD e código limpo e escalável.",
     "en": "Full Stack Developer with experience in React, Next.js, Node.js, NestJS, PHP and Python. I build REST APIs and system integrations and optimize MySQL databases, documenting with Swagger and Postman. I also work in infrastructure: Linux (Arch), Docker, VPN, servers and automation, from the application layer to deployment, with Git, CI/CD and clean, scalable code."
   },
-  "chips": ["React", "Next.js", "NestJS", "PHP", "Python", "MySQL", "Docker", "Linux"],
+  "chips": [
+    "React",
+    "Next.js",
+    "NestJS",
+    "PHP",
+    "Python",
+    "MySQL",
+    "Docker",
+    "Linux"
+  ],
   "wa_number": "5519996827401",
   "wa_message": "Olá! Vi seu portfólio.",
   "linkedin": "https://www.linkedin.com/in/joao-vitor-ferreira-br/",
@@ -27,23 +36,35 @@
   "accent": "#a875ff",
   "accent_soft": "#241a3a",
   "portfolio_url": null,
-  "site_url": "https://pombaa.github.io/cartaonfc",
+  "site_url": "https://joaovitorferreira.com.br",
   "og_image": null,
-  "photo": null,
+  "photo": "assets/foto.png",
   "meta_description": "Desenvolvedor Full Stack — React, Next.js, NestJS, PHP e Python. APIs REST, integrações, MySQL, Docker e Linux.",
   "labels": {
     "whatsapp": "WhatsApp",
     "linkedin": "LinkedIn",
-    "add_contact": {"pt": "Adicionar contato", "en": "Add contact"},
+    "add_contact": {
+      "pt": "Adicionar contato",
+      "en": "Add contact"
+    },
     "github": "GitHub",
-    "email": {"pt": "E-mail", "en": "Email"}
+    "email": {
+      "pt": "E-mail",
+      "en": "Email"
+    }
   },
   "ascii": {
-    "cols": 100,
-    "contrast": 1.0,
-    "gamma": 1.0,
-    "invert": false,
-    "crop": null
+    "cols": 240,
+    "contrast": 1.35,
+    "gamma": 0.95,
+    "invert": true,
+    "char_aspect": 0.8,
+    "crop": {
+      "x": 0.12,
+      "y": 0.00,
+      "w": 0.76,
+      "h": 1.0
+    }
   },
   "extras": []
 }

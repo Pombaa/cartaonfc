@@ -21,8 +21,8 @@
 <meta property="og:title" content="João V. Ferreira · Desenvolvedor Full Stack">
 <meta property="og:description" content="Full Stack: React, Next.js, NestJS, PHP, Python, MySQL, Docker, Linux.">
 <meta property="og:type" content="profile">
-<meta property="og:url" content="https://pombaa.github.io/cartaonfc/contacts/">
-<link rel="canonical" href="https://pombaa.github.io/cartaonfc/contacts/">
+<meta property="og:url" content="https://joaovitorferreira.com.br/contacts/">
+<link rel="canonical" href="https://joaovitorferreira.com.br/contacts/">
 <!-- faltando em card.config.json: og_image (og:image, twitter:card) — rode tools/sync.py depois de preenchê-los. -->
 <!-- sync:end:og -->
 <meta name="theme-color" content="#0b0710">
@@ -87,8 +87,8 @@
   }
   .card {
     width: 100%;
-    max-width: 440px;
-    max-height: 100%;
+    max-width: 420px;
+    max-height: calc(100dvh - 24px);
     min-width: 0;
     background: var(--surface);
     border: 1px solid var(--border-2);
@@ -96,8 +96,7 @@
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
   .card-bar {
     flex: 0 0 auto;
@@ -135,30 +134,75 @@
   .lang-toggle button.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .lang-toggle button.active:hover { color: var(--bg); }
   .portrait {
-    flex: 0 1 clamp(72px, 20vh, 190px);
-    min-height: clamp(56px, 15vh, 90px);
     position: relative;
+    flex: 1 1 auto;
+    min-height: 180px;
+    width: 100%;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-2);
-    border-bottom: 1px solid var(--border);
+    min-width: 0;
+    background: var(--surface);
   }
   .portrait-slot {
-    height: 100%;
-    aspect-ratio: 3 / 4;
-    max-width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    inset: 0;
     overflow: hidden;
   }
+  /* Overlay: dissolve só nas bordas — deixa camiseta visível no terço baixo. */
+  .portrait-slot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 110% 105% at 50% 32%,
+        transparent 48%,
+        rgba(21, 16, 31, 0.22) 72%,
+        rgba(21, 16, 31, 0.7) 90%,
+        var(--surface) 100%),
+      linear-gradient(to bottom,
+        var(--surface) 0%,
+        transparent 6%,
+        transparent 78%,
+        rgba(21, 16, 31, 0.55) 92%,
+        var(--surface) 100%);
+  }
   .portrait-ascii {
+    position: absolute;
+    top: 0;
+    left: 0;
     margin: 0;
+    width: max-content;
+    max-width: none;
+    overflow: visible;
     color: var(--accent);
+    opacity: .92;
     white-space: pre;
-    line-height: 1;
+    font-size: 16px;
+    line-height: 0.75;
+    letter-spacing: 0;
+    user-select: none;
+    transform-origin: top left;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    z-index: 0;
+    /* Máscara bem aberta — ombros/camiseta não viram oval de cabeça. */
+    -webkit-mask-image: radial-gradient(ellipse 135% 125% at 50% 36%,
+      #000 55%, rgba(0, 0, 0, 0.7) 78%, transparent 100%);
+    mask-image: radial-gradient(ellipse 135% 125% at 50% 36%,
+      #000 55%, rgba(0, 0, 0, 0.7) 78%, transparent 100%);
+  }
+  /* Halo desfocado atrás — blur real ao redor da silhueta. */
+  .portrait-ascii--blur {
+    z-index: 0;
+    opacity: 0.5;
+    filter: blur(12px);
+    -webkit-mask-image: none;
+    mask-image: none;
+    pointer-events: none;
+  }
+  .portrait-ascii:not(.portrait-ascii--blur) {
+    z-index: 1;
   }
   .portrait-fallback {
     width: 100%;
@@ -166,7 +210,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px dashed var(--border-2);
   }
   .portrait-initials {
     font-family: var(--font-mono);
@@ -175,35 +218,47 @@
     font-size: clamp(2rem, 8vh, 4rem);
     color: var(--accent);
   }
-  .card-rest {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-y);
-    padding: var(--gap-y) var(--pad-x) calc(var(--gap-y) + 2px);
-  }
-  .identity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .name-block {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
     text-align: center;
+    display: flex;
+    flex-direction: column;
     gap: 3px;
+    padding: 22px var(--pad-x) 6px;
+    background: linear-gradient(to bottom, transparent 0%, transparent 55%, rgba(21, 16, 31, 0.55) 82%, var(--surface) 100%);
+    pointer-events: none;
   }
-  .identity h1 {
+  .name-block h1 {
     margin: 0;
     font-size: var(--fs-h1);
     font-weight: 700;
     letter-spacing: .01em;
     color: var(--text);
   }
-  .role { margin: 0; font-size: var(--fs-role); color: var(--muted); }
-  .location { margin: 0; font-size: var(--fs-location); color: var(--dim); }
+  .name-block .role { margin: 0; font-size: var(--fs-role); color: var(--muted); }
+  .name-block .location { margin: 0; font-size: var(--fs-location); color: var(--dim); }
+  .card-rest {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px var(--pad-x) 12px;
+    min-height: 0;
+  }
   .bio {
     margin: 0;
     font-size: var(--fs-bio);
-    line-height: 1.42;
+    line-height: 1.35;
     color: var(--body-text);
     text-align: left;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    overflow: hidden;
   }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
   .chip {
@@ -254,6 +309,7 @@
   .secondary a:hover, .secondary a:focus-visible { color: var(--accent); }
   [data-i18n][hidden],
   .portrait-ascii[hidden],
+  .portrait-ascii--blur[hidden],
   .portrait-fallback[hidden] { display: none; }
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
@@ -314,6 +370,8 @@
   <!-- sync:start:portrait -->
   <div class="portrait" id="portrait">
     <div class="portrait-slot" id="portrait-slot">
+      <pre class="portrait-ascii portrait-ascii--blur" id="portrait-ascii-blur"
+        aria-hidden="true" hidden></pre>
       <pre class="portrait-ascii" id="portrait-ascii" role="img" hidden
         data-aria-pt="Retrato em arte ASCII de João V. Ferreira"
         data-aria-en="ASCII art portrait of João V. Ferreira"></pre>
@@ -324,12 +382,7 @@
         <span class="portrait-initials">JV</span>
       </div>
     </div>
-  </div>
-  <!-- sync:end:portrait -->
-
-  <div class="card-rest">
-    <!-- sync:start:identity -->
-    <div class="identity">
+    <div class="name-block">
       <h1>João V. Ferreira</h1>
       <p class="role">
         <span data-i18n="pt">Desenvolvedor Full Stack · Pleno</span><span data-i18n="en" hidden>Full-Stack Developer · Mid-level</span>
@@ -338,6 +391,11 @@
         <span data-i18n="pt">Serra Negra, SP, Brasil</span><span data-i18n="en" hidden>Serra Negra, SP, Brazil</span>
       </p>
     </div>
+  </div>
+  <!-- sync:end:portrait -->
+
+  <div class="card-rest">
+    <!-- sync:start:identity -->
     <!-- sync:end:identity -->
 
     <!-- sync:start:bio -->
@@ -395,9 +453,9 @@
 
 <!-- sync:start:ascii-script -->
 <!-- tools/sync.py descomenta esta linha sozinho quando "photo" existe em card.config.json. -->
-<!-- <script src="../ascii-photo.js"></script> -->
+<script src="../ascii-photo.js?v=64"></script>
 <!-- sync:end:ascii-script -->
-<script src="../ascii-art.js"></script>
+<script src="../ascii-art.js?v=64"></script>
 <script>
   (function () {
     "use strict";

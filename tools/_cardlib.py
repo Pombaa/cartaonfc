@@ -34,7 +34,7 @@ _REQUIRED_KEYS = [
     "phone", "vcf_filename", "accent",
 ]
 
-_ASCII_DEFAULTS = {"cols": 100, "contrast": 1.0, "gamma": 1.0, "invert": False, "crop": None}
+_ASCII_DEFAULTS = {"cols": 100, "contrast": 1.0, "gamma": 1.0, "invert": False, "crop": None, "char_aspect": 0.5}
 
 _LABEL_DEFAULTS = {
     "whatsapp": "WhatsApp",
