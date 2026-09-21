@@ -1,0 +1,49 @@
+{
+  "name": "João Vitor Ferreira de Assis",
+  "display_name": "João V. Ferreira",
+  "initials": "JV",
+  "handle": "~/pomba",
+  "role": {
+    "pt": "Desenvolvedor Full Stack · Pleno",
+    "en": "Full-Stack Developer · Mid-level"
+  },
+  "location": {
+    "pt": "Serra Negra, SP, Brasil",
+    "en": "Serra Negra, SP, Brazil"
+  },
+  "bio": {
+    "pt": "Desenvolvedor Full Stack com experiência em React, Next.js, Node.js, NestJS, PHP e Python. Construo APIs REST, integrações entre sistemas e otimizo bancos MySQL, documentando com Swagger e Postman. Também atuo em infraestrutura: Linux (Arch), Docker, VPN, servidores e automação, da camada de aplicação ao deploy, com Git, CI/CD e código limpo e escalável.",
+    "en": "Full Stack Developer with experience in React, Next.js, Node.js, NestJS, PHP and Python. I build REST APIs and system integrations and optimize MySQL databases, documenting with Swagger and Postman. I also work in infrastructure: Linux (Arch), Docker, VPN, servers and automation, from the application layer to deployment, with Git, CI/CD and clean, scalable code."
+  },
+  "chips": ["React", "Next.js", "NestJS", "PHP", "Python", "MySQL", "Docker", "Linux"],
+  "wa_number": "5519996827401",
+  "wa_message": "Olá! Vi seu portfólio.",
+  "linkedin": "https://www.linkedin.com/in/joao-vitor-ferreira-br/",
+  "github": "https://github.com/Pombaa",
+  "email": "prucorp23@gmail.com",
+  "phone": "+5519996827401",
+  "vcf_filename": "joao-ferreira.vcf",
+  "vcf_note": null,
+  "accent": "#a875ff",
+  "accent_soft": "#241a3a",
+  "portfolio_url": null,
+  "site_url": "https://pombaa.github.io/cartaonfc",
+  "og_image": null,
+  "photo": null,
+  "meta_description": "Desenvolvedor Full Stack — React, Next.js, NestJS, PHP e Python. APIs REST, integrações, MySQL, Docker e Linux.",
+  "labels": {
+    "whatsapp": "WhatsApp",
+    "linkedin": "LinkedIn",
+    "add_contact": {"pt": "Adicionar contato", "en": "Add contact"},
+    "github": "GitHub",
+    "email": {"pt": "E-mail", "en": "Email"}
+  },
+  "ascii": {
+    "cols": 100,
+    "contrast": 1.0,
+    "gamma": 1.0,
+    "invert": false,
+    "crop": null
+  },
+  "extras": []
+}
