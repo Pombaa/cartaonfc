@@ -1,0 +1,426 @@
+<!doctype html>
+<!--
+  Gerado/mantido em parte por tools/sync.py a partir de card.config.json.
+  Conteúdo entre marcadores "sync:start:<nome>" / "sync:end:<nome>" (comentários
+  HTML ou CSS) é REESCRITO a cada `python3 tools/sync.py` — edite o config, não
+  o HTML, ou sua edição manual será perdida. Fora dos marcadores, o arquivo é
+  seu: estrutura, CSS de layout e o script de i18n/ASCII podem ser editados
+  livremente.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- sync:start:title -->
+<title>João V. Ferreira · Desenvolvedor Full Stack</title>
+<!-- sync:end:title -->
+<!-- sync:start:description -->
+<meta name="description" content="Desenvolvedor Full Stack — React, Next.js, NestJS, PHP e Python. APIs REST, integrações, MySQL, Docker e Linux.">
+<!-- sync:end:description -->
+<!-- sync:start:og -->
+<meta property="og:title" content="João V. Ferreira · Desenvolvedor Full Stack">
+<meta property="og:description" content="Full Stack: React, Next.js, NestJS, PHP, Python, MySQL, Docker, Linux.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://pombaa.github.io/cartaonfc/contacts/">
+<link rel="canonical" href="https://pombaa.github.io/cartaonfc/contacts/">
+<!-- faltando em card.config.json: og_image (og:image, twitter:card) — rode tools/sync.py depois de preenchê-los. -->
+<!-- sync:end:og -->
+<meta name="theme-color" content="#0b0710">
+<meta name="color-scheme" content="dark">
+<style>
+  :root {
+    --bg: #0b0710;
+    --bg-2: #120c1c;
+    --surface: #15101f;
+    --border: #241c34;
+    --border-2: #3a2c57;
+    --text: #f2eef9;
+    --body-text: #cabfe0;
+    --muted: #9c8fb8;
+    --dim: #8f83ab;
+    /* sync:start:theme */
+    --accent: #a875ff;
+    --accent-soft: #241a3a;
+    /* sync:end:theme */
+    --radius: 0;
+    --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Mono", "Segoe UI Mono",
+      "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    --gap-outer: clamp(6px, 2vh, 14px);
+    --gap-y: clamp(6px, 1.5vh, 12px);
+    --pad-x: clamp(14px, 5vw, 22px);
+    --fs-handle: clamp(10px, 2.6vw, 12px);
+    --fs-toggle: clamp(11px, 2.8vw, 12px);
+    --fs-h1: clamp(20px, 5.2vw, 26px);
+    --fs-role: clamp(11px, 3vw, 13px);
+    --fs-location: clamp(10px, 2.8vw, 12px);
+    --fs-bio: clamp(12px, 3.2vw, 13.5px);
+    --fs-chip: clamp(10px, 2.6vw, 11.5px);
+    --fs-cta: clamp(13px, 3.6vw, 15px);
+    --fs-secondary: clamp(11px, 2.8vw, 13px);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  button { font: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    padding:
+      calc(var(--gap-outer) + env(safe-area-inset-top, 0px))
+      calc(var(--gap-outer) + env(safe-area-inset-right, 0px))
+      calc(var(--gap-outer) + env(safe-area-inset-bottom, 0px))
+      calc(var(--gap-outer) + env(safe-area-inset-left, 0px));
+  }
+  .card {
+    width: 100%;
+    max-width: 440px;
+    max-height: 100%;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    border-top: 2px solid var(--accent);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .card-bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: clamp(6px, 1.4vh, 9px) var(--pad-x);
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .path { color: var(--muted); font-size: var(--fs-handle); }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--muted);
+    font-size: var(--fs-handle);
+    text-decoration: none;
+  }
+  .back-link:hover, .back-link:focus-visible { color: var(--accent); }
+  .lang-toggle { margin-left: auto; display: flex; gap: 4px; }
+  .lang-toggle button {
+    font-family: var(--font-mono);
+    font-size: var(--fs-toggle);
+    font-weight: 700;
+    color: var(--dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px 9px;
+    min-height: 28px;
+    cursor: pointer;
+  }
+  .lang-toggle button:hover { border-color: var(--accent); color: var(--accent); }
+  .lang-toggle button.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .lang-toggle button.active:hover { color: var(--bg); }
+  .portrait {
+    flex: 0 1 clamp(72px, 20vh, 190px);
+    min-height: clamp(56px, 15vh, 90px);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .portrait-slot {
+    height: 100%;
+    aspect-ratio: 3 / 4;
+    max-width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .portrait-ascii {
+    margin: 0;
+    color: var(--accent);
+    white-space: pre;
+    line-height: 1;
+  }
+  .portrait-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-2);
+  }
+  .portrait-initials {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: .08em;
+    font-size: clamp(2rem, 8vh, 4rem);
+    color: var(--accent);
+  }
+  .card-rest {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-y);
+    padding: var(--gap-y) var(--pad-x) calc(var(--gap-y) + 2px);
+  }
+  .identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 3px;
+  }
+  .identity h1 {
+    margin: 0;
+    font-size: var(--fs-h1);
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--text);
+  }
+  .role { margin: 0; font-size: var(--fs-role); color: var(--muted); }
+  .location { margin: 0; font-size: var(--fs-location); color: var(--dim); }
+  .bio {
+    margin: 0;
+    font-size: var(--fs-bio);
+    line-height: 1.42;
+    color: var(--body-text);
+    text-align: left;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: var(--fs-chip);
+    color: var(--accent);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px 8px;
+  }
+  .ctas { display: flex; flex-direction: column; gap: 8px; }
+  .cta-row { display: flex; gap: 8px; }
+  .cta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: clamp(9px, 1.6vh, 12px) 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: var(--fs-cta);
+    text-decoration: none;
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    white-space: nowrap;
+  }
+  .cta svg { flex: 0 0 auto; }
+  .cta-whatsapp { background: var(--accent-soft); color: var(--accent); }
+  .cta-linkedin { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .cta-vcf { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  @media (hover: hover) {
+    .cta:hover { border-color: var(--accent); transform: translateY(-1px); }
+  }
+  .cta:focus-visible { transform: translateY(-1px); }
+  .secondary { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .secondary a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: var(--fs-secondary);
+    text-decoration: none;
+  }
+  .secondary a:hover, .secondary a:focus-visible { color: var(--accent); }
+  [data-i18n][hidden],
+  .portrait-ascii[hidden],
+  .portrait-fallback[hidden] { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .cta:hover, .cta:focus-visible { transform: none; }
+  }
+  /* Landscape phones / low-height windows: portrait art is the first thing
+     to go (identity text already says who this is), then type/gaps shrink.
+     Button layout (WhatsApp|LinkedIn row, wide vCard button, secondary row)
+     is unchanged — only sizes. */
+  @media (max-height: 620px) {
+    .portrait { display: none; }
+    :root {
+      --gap-outer: clamp(3px, 1.2vh, 8px);
+      --gap-y: clamp(2px, 0.8vh, 6px);
+      --fs-h1: clamp(15px, 4.2vw, 18px);
+      --fs-role: clamp(9.5px, 2.4vw, 11px);
+      --fs-location: clamp(8.5px, 2.2vw, 10px);
+      --fs-bio: clamp(10px, 2.4vw, 11.5px);
+      --fs-chip: clamp(8.5px, 2vw, 10px);
+      --fs-cta: clamp(11px, 2.8vw, 13px);
+      --fs-secondary: clamp(9.5px, 2.2vw, 11px);
+    }
+    .identity { gap: 1px; }
+    .bio { line-height: 1.2; }
+    .chips { gap: 4px; }
+    .ctas { gap: 4px; }
+    .cta { padding: clamp(4px, 1vh, 7px) 8px; }
+    .secondary { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="card-bar">
+    <!-- sync:start:topbar -->
+    <span class="path">~/pomba</span>
+    <!-- sync:end:topbar -->
+    <div class="lang-toggle" role="group" aria-label="Idioma / Language">
+      <button type="button" id="btn-pt" aria-pressed="true">PT</button>
+      <button type="button" id="btn-en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <!-- sync:start:portrait -->
+  <div class="portrait" id="portrait">
+    <div class="portrait-slot" id="portrait-slot">
+      <pre class="portrait-ascii" id="portrait-ascii" role="img" hidden
+        data-aria-pt="Retrato em arte ASCII de João V. Ferreira"
+        data-aria-en="ASCII art portrait of João V. Ferreira"></pre>
+      <div class="portrait-fallback" id="portrait-fallback" role="img"
+        aria-label="Iniciais JV — retrato de João V. Ferreira, ainda sem foto"
+        data-aria-pt="Iniciais JV — retrato de João V. Ferreira, ainda sem foto"
+        data-aria-en="Initials JV — portrait of João V. Ferreira, no photo yet">
+        <span class="portrait-initials">JV</span>
+      </div>
+    </div>
+  </div>
+  <!-- sync:end:portrait -->
+
+  <div class="card-rest">
+    <!-- sync:start:identity -->
+    <div class="identity">
+      <h1>João V. Ferreira</h1>
+      <p class="role">
+        <span data-i18n="pt">Desenvolvedor Full Stack · Pleno</span><span data-i18n="en" hidden>Full-Stack Developer · Mid-level</span>
+      </p>
+      <p class="location">
+        <span data-i18n="pt">Serra Negra, SP, Brasil</span><span data-i18n="en" hidden>Serra Negra, SP, Brazil</span>
+      </p>
+    </div>
+    <!-- sync:end:identity -->
+
+    <!-- sync:start:bio -->
+    <p class="bio">
+      <span data-i18n="pt">Desenvolvedor Full Stack com experiência em React, Next.js, Node.js, NestJS, PHP e Python. Construo APIs REST, integrações entre sistemas e otimizo bancos MySQL, documentando com Swagger e Postman. Também atuo em infraestrutura: Linux (Arch), Docker, VPN, servidores e automação, da camada de aplicação ao deploy, com Git, CI/CD e código limpo e escalável.</span><span data-i18n="en" hidden>Full Stack Developer with experience in React, Next.js, Node.js, NestJS, PHP and Python. I build REST APIs and system integrations and optimize MySQL databases, documenting with Swagger and Postman. I also work in infrastructure: Linux (Arch), Docker, VPN, servers and automation, from the application layer to deployment, with Git, CI/CD and clean, scalable code.</span>
+    </p>
+    <!-- sync:end:bio -->
+
+    <!-- sync:start:chips -->
+    <div class="chips">
+      <span class="chip">React</span>
+      <span class="chip">Next.js</span>
+      <span class="chip">NestJS</span>
+      <span class="chip">PHP</span>
+      <span class="chip">Python</span>
+      <span class="chip">MySQL</span>
+      <span class="chip">Docker</span>
+      <span class="chip">Linux</span>
+    </div>
+    <!-- sync:end:chips -->
+
+    <!-- sync:start:ctas -->
+    <div class="ctas">
+      <div class="cta-row">
+        <a class="cta cta-whatsapp" href="https://wa.me/5519996827401?text=Ol%C3%A1!%20Vi%20seu%20portf%C3%B3lio." target="_blank" rel="noopener noreferrer">
+          WhatsApp
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M10 7h7v7"/></svg>
+        </a>
+        <a class="cta cta-linkedin" href="https://www.linkedin.com/in/joao-vitor-ferreira-br/" target="_blank" rel="noopener noreferrer">
+          LinkedIn
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M10 7h7v7"/></svg>
+        </a>
+      </div>
+      <a class="cta cta-vcf" href="joao-ferreira.vcf" download="joao-ferreira.vcf" type="text/vcard">
+        <span data-i18n="pt">Adicionar contato</span><span data-i18n="en" hidden>Add contact</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20.5c0-3.6 2.7-6 6-6s6 2.4 6 6M18 8v6M21 11h-6"/></svg>
+      </a>
+    </div>
+    <!-- sync:end:ctas -->
+
+    <!-- sync:start:secondary -->
+    <div class="secondary">
+      <a href="https://github.com/Pombaa" target="_blank" rel="noopener noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-5 6 5 6M16 6l5 6-5 6"/></svg>
+        GitHub
+      </a>
+      <a href="mailto:prucorp23@gmail.com">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13 20.5 6.5"/></svg>
+        <span data-i18n="pt">E-mail</span><span data-i18n="en" hidden>Email</span>
+      </a>
+    </div>
+    <!-- sync:end:secondary -->
+  </div>
+</main>
+
+<!-- sync:start:ascii-script -->
+<!-- tools/sync.py descomenta esta linha sozinho quando "photo" existe em card.config.json. -->
+<!-- <script src="../ascii-photo.js"></script> -->
+<!-- sync:end:ascii-script -->
+<script src="../ascii-art.js"></script>
+<script>
+  (function () {
+    "use strict";
+    var btnPt = document.getElementById("btn-pt");
+    var btnEn = document.getElementById("btn-en");
+    var ptNodes = document.querySelectorAll('[data-i18n="pt"]');
+    var enNodes = document.querySelectorAll('[data-i18n="en"]');
+    var ariaNodes = document.querySelectorAll('[data-aria-pt]');
+
+    function setLang(lang) {
+      var isPt = lang === "pt";
+      ptNodes.forEach(function (el) { el.hidden = !isPt; });
+      enNodes.forEach(function (el) { el.hidden = isPt; });
+      btnPt.classList.toggle("active", isPt);
+      btnEn.classList.toggle("active", !isPt);
+      btnPt.setAttribute("aria-pressed", String(isPt));
+      btnEn.setAttribute("aria-pressed", String(!isPt));
+      document.documentElement.lang = isPt ? "pt-BR" : "en";
+      ariaNodes.forEach(function (el) {
+        el.setAttribute("aria-label", isPt ? el.dataset.ariaPt : el.dataset.ariaEn);
+      });
+      try { localStorage.setItem("lang", lang); } catch (e) {}
+    }
+
+    btnPt.addEventListener("click", function () { setLang("pt"); });
+    btnEn.addEventListener("click", function () { setLang("en"); });
+
+    function resolveInitialLang() {
+      try {
+        var fromUrl = new URLSearchParams(window.location.search).get("lang");
+        if (fromUrl === "pt" || fromUrl === "en") return fromUrl;
+      } catch (e) {}
+      try {
+        var stored = localStorage.getItem("lang");
+        if (stored === "pt" || stored === "en") return stored;
+      } catch (e) {}
+      var nav = "";
+      try { nav = (navigator.language || "").toLowerCase(); } catch (e) {}
+      return nav.indexOf("pt") === 0 ? "pt" : "en";
+    }
+
+    setLang(resolveInitialLang());
+  })();
+</script>
+</body>
+</html>

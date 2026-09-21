@@ -1,0 +1,13 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Ferreira de Assis;João Vitor;;;
+FN:João Vitor Ferreira de Assis
+TITLE:Desenvolvedor Full Stack
+TEL;TYPE=CELL,VOICE:+5519996827401
+EMAIL;TYPE=INTERNET:prucorp23@gmail.com
+URL;TYPE=LinkedIn:https://www.linkedin.com/in/joao-vitor-ferreira-br/
+URL;TYPE=GitHub:https://github.com/Pombaa
+ADR;TYPE=HOME:;;Serra Negra;SP;;Brasil
+NOTE:Desenvolvedor Full Stack · React\, Next.js\, NestJS\, PHP\, Python\, 
+ MySQL\, Docker\, Linux
+END:VCARD
