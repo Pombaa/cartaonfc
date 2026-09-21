@@ -253,12 +253,11 @@
     * { transition: none !important; animation: none !important; }
     .cta:hover, .cta:focus-visible { transform: none; }
   }
-  /* Landscape phones / low-height windows: portrait art is the first thing
-     to go (identity text already says who this is), then type/gaps shrink.
-     Button layout (WhatsApp|LinkedIn row, wide vCard button, secondary row)
-     is unchanged — only sizes. */
+  /* Low-height windows: type/gaps shrink first (retrato continua visível,
+     encolhendo pelo próprio clamp() de .portrait). Layout dos botões
+     (linha WhatsApp|LinkedIn, botão largo "Adicionar contato", linha de
+     links secundários) não muda, só os tamanhos. */
   @media (max-height: 620px) {
-    .portrait { display: none; }
     :root {
       --gap-outer: clamp(3px, 1.2vh, 8px);
       --gap-y: clamp(2px, 0.8vh, 6px);
@@ -276,6 +275,21 @@
     .ctas { gap: 4px; }
     .cta { padding: clamp(4px, 1vh, 7px) 8px; }
     .secondary { gap: 8px; }
+  }
+  /* Retrato só some quando encolher (min-height: clamp(56px,...) acima)
+     não é suficiente sozinho — medido empiricamente (bisseção com
+     Playwright, ver tools/verify.py):
+     - Paisagem: card fica preso a max-width:440px, então largura extra
+       não ajuda; o piso natural de altura (com o retrato no mínimo) é
+       ~398px em qualquer largura ≥440px. 500px dá margem confortável.
+     - Retrato (celular em pé): piso medido varia 373–416px conforme
+       largura (360–393px) e conteúdo (pior caso: 4 extras + back-link,
+       EN, 375px de largura). 440px cobre o pior caso com folga. */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .portrait { display: none; }
+  }
+  @media (orientation: portrait) and (max-height: 440px) {
+    .portrait { display: none; }
   }
 </style>
 </head>

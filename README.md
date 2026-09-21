@@ -18,6 +18,7 @@ cartao/
     joao-ferreira.vcf           vCard 3.0 gerado a partir do config — deploy
     og.png                      (opcional) gerado por `sync.py --og` — deploy
   ascii-photo.js              (opcional) gerado quando "photo" existe — deploy
+  requirements-dev.txt        deps de dev pinadas — NÃO faz parte do deploy
   tools/                      só dev, NÃO faz parte do deploy
     sync.py                     comando principal: config -> HTML + .vcf + ascii
     verify.py                   roda a bateria de testes em cópias temporárias
@@ -48,10 +49,20 @@ python3 tools/sync.py
 livremente), o `.vcf`, e `ascii-photo.js` se `"photo"` estiver definido. É
 idempotente: rodar duas vezes seguidas sem mudar o config não altera nada.
 
-Dependências de dev: `pip install Pillow` (sempre necessário) e, opcionais,
-`pip install vobject` (valida o `.vcf` gerado) e
-`pip install playwright && python3 -m playwright install chromium` (só para
-`sync.py --og` e `verify.py`).
+Dependências de dev (versões pinadas em `requirements-dev.txt`; nenhuma vai
+para o site publicado):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate            # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+python3 -m playwright install chromium
+```
+
+`Pillow` é sempre necessário (ascii-art a partir de foto). `vobject` é
+opcional (valida o `.vcf` gerado por `sync.py`/`verify.py`; sem ele, os dois
+só avisam que pularam a validação). `playwright` é necessário só para
+`sync.py --og` e `verify.py`.
 
 ## Pendências
 
@@ -113,7 +124,7 @@ heurística assume o padrão "conector como de/da/dos" do português), defina
   screenshot do próprio cartão + fundo do tema, e preenche `og_image`.
 - `python3 tools/verify.py` — roda a bateria de aceite (zero scroll, zero
   request externo, zero erro de console, hrefs, contraste AA, `.vcf`
-  válido, teclado, i18n) em 8 viewports × PT/EN, em 4 cenários (incluindo
+  válido, teclado, i18n) em 12 viewports × PT/EN, em 4 cenários (incluindo
   `subpath`, sob `/cartaonfc/`), cada um numa cópia temporária do projeto
   (nunca suja este repositório).
 - `python3 tools/gen-ascii.py foto.jpg [--columns N] [--contrast] [--gamma]
@@ -236,13 +247,39 @@ automaticamente se você não fixar um valor.
   agora prova isso com um cenário `subpath`, que serve o projeto sob
   `/cartaonfc/` (handler de `http.server` que remove o prefixo antes de
   resolver o arquivo) e roda a mesma bateria de aceite nele.
-- **Compactação em baixa altura** (`@media (max-height: 620px)`, viewports
-  640×360/844×390/1024×600): o retrato (ASCII ou iniciais) some primeiro —
-  a identidade já diz o nome, então é o elemento menos essencial — e só
-  depois tipografia/gaps encolhem. O layout dos botões (linha
+- **Compactação em baixa altura** (`@media (max-height: 620px)`): tipografia
+  e gaps encolhem (o retrato já encolhe sozinho pelo `clamp()` em
+  `.portrait`, sem precisar de regra extra). O layout dos botões (linha
   WhatsApp|LinkedIn, botão largo "Adicionar contato", linha de links
   secundários) não muda, só os tamanhos. Nenhum viewport ≥640px de altura
   (os 5 já aprovados) é afetado — o breakpoint fica abaixo do menor deles.
+- **Retrato só é ocultado quando encolher não basta** (revisão da regra
+  acima): medi por bisseção com Playwright (largura fixa, altura variando,
+  script ad-hoc, não versionado) até onde o encolhimento natural do
+  retrato (`min-height: clamp(56px, 15vh, 90px)`) mais a compactação acima
+  dão conta sozinhos, sem esconder nada:
+  - **Paisagem**: o `.card` trava em `max-width: 440px`, então largura
+    extra não ajuda o layout vertical — o piso medido é ~398px em
+    qualquer largura ≥440px (testado 640–1920px), igual em todos os
+    cenários. `@media (orientation: landscape) and (max-height: 500px)`
+    esconde o retrato só abaixo disso (640×360 e 844×390 continuam
+    escondendo; 1024×600 agora **mostra** o retrato encolhido).
+  - **Retrato (celular em pé)**: piso medido 373–416px conforme largura
+    (360–393px, testado com conteúdo atual e com o retrato ASCII de
+    teste — idêntico nos dois, o encolhimento não depende do tipo de
+    retrato) e cenário (pior caso: `portfolio-site-extras`, 4 extras +
+    seta de voltar, em inglês, 375px de largura). `@media (orientation:
+    portrait) and (max-height: 440px)` cobre o pior caso com folga — os 4
+    viewports novos de celular com barra (548–700px de altura) ficam bem
+    acima e mostram o retrato normalmente.
+- **Viewports "celular com barra de navegador"** (375×548, 360×560,
+  390×664, 393×700): a barra de endereço/navegação do Chrome/Safari mobile
+  reduz a altura *útil* do viewport bem abaixo da altura "cheia" do
+  device — testam exatamente a faixa onde o retrato encolhe mas não
+  chega a sumir.
+- **`requirements-dev.txt`**: versões pinadas (Pillow, playwright,
+  vobject) para reprodutibilidade — nenhuma delas é usada em runtime pelo
+  site publicado.
 - **Fallback de `dvh`**: `body` declara `height: 100vh` antes de
   `height: 100dvh` — navegadores sem suporte a `dvh` simplesmente ignoram a
   segunda declaração e ficam com `vh`; navegadores com suporte usam a
@@ -255,11 +292,14 @@ atual do config, (ii) com foto sintética, (iii) com `portfolio_url` +
 `site_url` + 4 extras, (iv) **subpath**: serve o projeto sob `/cartaonfc/`
 (um handler mínimo de `http.server` remove o prefixo antes de resolver o
 arquivo), replicando como o GitHub Pages de *project site* monta a URL —,
-em 8 viewports × PT/EN:
+em 12 viewports × PT/EN:
 
 - 360×640, 390×844, 768×1024, 1366×768, 1920×1080 (retrato/paisagem normais).
-- 640×360, 844×390, 1024×600 (celular deitado / janela baixa — ativa o
-  `@media (max-height: 620px)` que esconde o retrato e compacta tipografia).
+- 640×360, 844×390, 1024×600 (celular deitado / janela baixa — retrato
+  encolhe e, abaixo de 500px de altura em paisagem, some).
+- 375×548, 360×560, 390×664, 393×700 (celular em pé com barra de
+  navegador — faixa onde o retrato encolhe mas não chega a sumir; some só
+  abaixo de 440px de altura em pé).
 
 Critérios, iguais em todos os cenários/viewports:
 
@@ -274,6 +314,7 @@ Critérios, iguais em todos os cenários/viewports:
 
 Cada cenário roda numa cópia temporária do projeto (`tempfile.mkdtemp`), que
 é apagada ao final — o repositório nunca é alterado por `verify.py`. Como
-evidência visual (não como critério de pass/fail), os 3 viewports baixos
-são fotografados em `verify-output/<cenário>/<viewport>_<lang>.png`
-(git-ignorado, sobrescrito a cada execução).
+evidência visual (não como critério de pass/fail), os 7 viewports
+baixos/com-barra são fotografados em
+`verify-output/<cenário>/<viewport>_<lang>.png` (git-ignorado, sobrescrito
+a cada execução).

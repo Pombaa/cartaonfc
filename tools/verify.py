@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Runs the acceptance-criteria battery (zero scroll, zero external
 requests, zero console issues, correct hrefs, AA contrast, valid .vcf, i18n,
-keyboard) across 8 viewports x 2 languages, in 4 scenarios, each on a
+keyboard) across 12 viewports x 2 languages, in 4 scenarios, each on a
 throwaway temp copy of the project (never touching this repo):
 
   (i)   estado atual de card.config.json
@@ -10,7 +10,11 @@ throwaway temp copy of the project (never touching this repo):
   (iv)  subpath — serve o projeto sob /cartaonfc/, como no GitHub Pages
         de project site, provando que nenhum path quebra com o prefixo
 
-Screenshots dos 3 viewports landscape/baixa-altura (evidência visual, não
+Viewports: 5 normais + 3 landscape/baixa-altura (360×640…1024×600) + 4
+celular em pé com barra de navegador (375×548…393×700), que exercitam a
+faixa onde o retrato encolhe mas não chega a sumir.
+
+Screenshots dos 7 viewports baixos/com-barra (evidência visual, não
 usados como critério de pass/fail) vão para verify-output/ (git-ignorado).
 
 Dev-only. Requires Pillow, Playwright (Python) and, optionally, vobject.
@@ -46,12 +50,20 @@ VIEWPORTS = [
     ("640x360", 640, 360),
     ("844x390", 844, 390),
     ("1024x600", 1024, 600),
+    # Celulares em pé com barra de navegador (viewport útil menor que a
+    # altura "cheia" do device) — testam a faixa onde o retrato encolhe
+    # mas NÃO é escondido (ver @media (orientation: portrait) no CSS).
+    ("375x548", 375, 548),
+    ("360x560", 360, 560),
+    ("390x664", 390, 664),
+    ("393x700", 393, 700),
 ]
 LANGS = ["pt", "en"]
 
-# Landscape/low-height viewports added for the compaction media query — kept
-# separate so run_battery can screenshot just these as visual evidence.
+# Landscape/low-height + celular-com-barra viewports — kept separate so
+# run_battery can screenshot just these as visual evidence.
 LOW_HEIGHT_VIEWPORTS = {"640x360", "844x390", "1024x600"}
+BROWSER_CHROME_VIEWPORTS = {"375x548", "360x560", "390x664", "393x700"}
 
 OUT_DIR = ROOT / "verify-output"
 
@@ -163,7 +175,7 @@ def run_battery(page, base_url, cfg, expect, failures, console_issues, external_
             page.goto(f"{base_url}?lang={lang}", wait_until="networkidle")
             page.wait_for_timeout(120)
 
-            if shot_dir and vp_name in LOW_HEIGHT_VIEWPORTS:
+            if shot_dir and (vp_name in LOW_HEIGHT_VIEWPORTS or vp_name in BROWSER_CHROME_VIEWPORTS):
                 shot_dir.mkdir(parents=True, exist_ok=True)
                 page.screenshot(path=str(shot_dir / f"{vp_name}_{lang}.png"))
 
