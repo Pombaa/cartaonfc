@@ -125,7 +125,8 @@ heurística assume o padrão "conector como de/da/dos" do português), defina
 - `python3 tools/verify.py` — roda a bateria de aceite (zero scroll, zero
   request externo, zero erro de console, hrefs, contraste AA, `.vcf`
   válido, teclado, i18n) em 12 viewports × PT/EN, em 4 cenários (incluindo
-  `subpath`, sob `/cartaonfc/`), cada um numa cópia temporária do projeto
+  `subpath`, sob `/cartaonfc/`) mais um 5º cenário `texto-ampliado`
+  (`html{font-size:125%/150%}`), cada um numa cópia temporária do projeto
   (nunca suja este repositório).
 - `python3 tools/gen-ascii.py foto.jpg [--columns N] [--contrast] [--gamma]
   [--invert] [--crop x,y,w,h] [--output caminho]` — gera um `ascii-photo.js`
@@ -284,8 +285,24 @@ automaticamente se você não fixar um valor.
   `height: 100dvh` — navegadores sem suporte a `dvh` simplesmente ignoram a
   segunda declaração e ficam com `vh`; navegadores com suporte usam a
   última declaração válida (`dvh`), como já era.
-
-## Verificação
+- **`.card` agora é `overflow-x: hidden; overflow-y: auto`** (era
+  `overflow: hidden`): rede de segurança — se o conteúdo não couber
+  (ex. texto ampliado pela preferência de acessibilidade do usuário), o
+  cartão ganha um scroll interno em vez de cortar silenciosamente. `auto`
+  (não `scroll`) não reserva espaço de scrollbar quando não precisa, então
+  não há diff visual quando o conteúdo cabe — confirmado pelos 4 cenários
+  normais × 12 viewports continuando com `scrollHeight <= clientHeight`
+  (zero scroll) em todos.
+- **Tamanhos de fonte convertidos de `px` para `rem` nos limites do
+  `clamp()`** (o termo fluido em `vw` continua igual): antes, `--fs-*`
+  usava `clamp(10px, 2.6vw, 12px)` — preso a pixels absolutos, não
+  respondia em nada a `html{font-size:125%/150%}` (a forma padrão de
+  testar a preferência de "texto maior" do SO/navegador, já que zoom de
+  página é outra coisa). Convertido para `clamp(0.625rem, 2.6vw, 0.75rem)`
+  — em 100% (padrão), `1rem = 16px` e o valor computado é idêntico ao
+  `px` anterior (diff nulo), mas agora cresce com a preferência de fonte.
+  `.portrait-initials` já usava `rem` desde antes (não precisou de ajuste)
+  — foi o único caso que já funcionava.
 
 `python3 tools/verify.py` roda, para cada um de 4 cenários — (i) estado
 atual do config, (ii) com foto sintética, (iii) com `portfolio_url` +
@@ -301,10 +318,14 @@ em 12 viewports × PT/EN:
   navegador — faixa onde o retrato encolhe mas não chega a sumir; some só
   abaixo de 440px de altura em pé).
 
-Critérios, iguais em todos os cenários/viewports:
+Critérios, iguais nesses 4 cenários/12 viewports:
 
-- Zero scroll de página **e** zero elemento (chip/botão/link) com a caixa
-  fora dos limites do cartão (recorte silencioso por `overflow: hidden`).
+- **Zero scroll** = `scrollHeight <= clientHeight`, checado na página **e**
+  no `.card` (o `.card` é `overflow-y: auto` — rede de segurança para texto
+  ampliado, ver cenário v abaixo — mas nesses 4 cenários normais continua
+  proibido precisar dela). Mais uma checagem por bounding box, elemento a
+  elemento, que aponta qual e por quanto, se algo passar do limite do
+  cartão.
 - Zero requests externos, zero erro/warning de console.
 - Todos os `href` por valor exato (WhatsApp com número+texto codificados,
   LinkedIn, GitHub, `mailto:`, `.vcf` com o nome certo, baixado de verdade).
@@ -312,9 +333,20 @@ Critérios, iguais em todos os cenários/viewports:
 - Toggle PT/EN, `?lang=`, ordem de tab, `:focus-visible`.
 - Contraste calculado (não estimado) para todo texto/botão relevante.
 
+Um **5º cenário, `texto-ampliado`**, aplica `html { font-size: 125% }` e
+`150%` (simula a preferência de "texto maior" do SO/navegador) nos 4
+viewports de celular com barra × PT/EN. Aqui zero scroll **não** é
+exigido — o `.card` pode rolar, é a rede de segurança funcionando — mas
+exige-se: zero overflow horizontal, zero erro de console, e que os 5
+elementos interativos (WhatsApp, LinkedIn, Adicionar contato, GitHub,
+E-mail) continuem alcançáveis por rolagem do cartão e clicáveis
+(`locator.click(trial=True)`, que faz as checagens de "actionability" do
+Playwright — visível, estável, recebe eventos — sem clicar de verdade).
+
 Cada cenário roda numa cópia temporária do projeto (`tempfile.mkdtemp`), que
 é apagada ao final — o repositório nunca é alterado por `verify.py`. Como
 evidência visual (não como critério de pass/fail), os 7 viewports
-baixos/com-barra são fotografados em
-`verify-output/<cenário>/<viewport>_<lang>.png` (git-ignorado, sobrescrito
-a cada execução).
+baixos/com-barra dos 4 cenários normais, mais todas as combinações do
+`texto-ampliado`, são fotografados em
+`verify-output/<cenário>/<viewport>_<lang>[_<escala>].png` (git-ignorado,
+sobrescrito a cada execução).

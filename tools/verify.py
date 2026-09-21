@@ -2,20 +2,29 @@
 """Runs the acceptance-criteria battery (zero scroll, zero external
 requests, zero console issues, correct hrefs, AA contrast, valid .vcf, i18n,
 keyboard) across 12 viewports x 2 languages, in 4 scenarios, each on a
-throwaway temp copy of the project (never touching this repo):
+throwaway temp copy of the project (never touching this repo), plus a 5th
+scenario with scaled text:
 
   (i)   estado atual de card.config.json
   (ii)  com uma foto sintética (retrato ASCII ativo)
   (iii) com portfolio_url + site_url + 4 extras preenchidos
   (iv)  subpath — serve o projeto sob /cartaonfc/, como no GitHub Pages
         de project site, provando que nenhum path quebra com o prefixo
+  (v)   texto-ampliado — html{font-size:125%/150%} (simula "texto maior"
+        do SO/navegador) nos 4 viewports de celular com barra; sem exigir
+        zero scroll (.card tem overflow-y:auto como rede de segurança),
+        mas exigindo zero overflow horizontal e que os 5 elementos
+        interativos continuem alcançáveis por rolagem e clicáveis
 
-Viewports: 5 normais + 3 landscape/baixa-altura (360×640…1024×600) + 4
-celular em pé com barra de navegador (375×548…393×700), que exercitam a
-faixa onde o retrato encolhe mas não chega a sumir.
+"Zero scroll" (cenários i–iv) = scrollHeight <= clientHeight, checado na
+página E no .card (ver run_battery). Viewports: 5 normais + 3
+landscape/baixa-altura (360×640…1024×600) + 4 celular em pé com barra de
+navegador (375×548…393×700), que exercitam a faixa onde o retrato encolhe
+mas não chega a sumir.
 
-Screenshots dos 7 viewports baixos/com-barra (evidência visual, não
-usados como critério de pass/fail) vão para verify-output/ (git-ignorado).
+Screenshots dos 7 viewports baixos/com-barra + do cenário texto-ampliado
+(evidência visual, não usados como critério de pass/fail em iv) vão para
+verify-output/ (git-ignorado).
 
 Dev-only. Requires Pillow, Playwright (Python) and, optionally, vobject.
     pip install Pillow playwright vobject
@@ -179,19 +188,33 @@ def run_battery(page, base_url, cfg, expect, failures, console_issues, external_
                 shot_dir.mkdir(parents=True, exist_ok=True)
                 page.screenshot(path=str(shot_dir / f"{vp_name}_{lang}.png"))
 
+            # "Zero scroll" = scrollHeight <= clientHeight, checked on BOTH the
+            # page and the card. .card is overflow-y:auto (safety net for
+            # scaled text, see cenário "texto-ampliado"), so page-level alone
+            # would miss content that overflows only the card.
             dims = page.evaluate(
-                "() => ({sh: document.documentElement.scrollHeight, ih: window.innerHeight,"
-                " sw: document.documentElement.scrollWidth, iw: window.innerWidth})"
+                """() => {
+                    const doc = document.documentElement;
+                    const card = document.querySelector('.card');
+                    return {
+                        pageSH: doc.scrollHeight, pageCH: doc.clientHeight,
+                        pageSW: doc.scrollWidth, pageCW: doc.clientWidth,
+                        cardSH: card.scrollHeight, cardCH: card.clientHeight,
+                        cardSW: card.scrollWidth, cardCW: card.clientWidth,
+                    };
+                }"""
             )
-            if dims["sh"] > dims["ih"]:
-                failures.append(f"SCROLL(V) {label}: scrollHeight={dims['sh']} > innerHeight={dims['ih']}")
-            if dims["sw"] > dims["iw"]:
-                failures.append(f"SCROLL(H) {label}: scrollWidth={dims['sw']} > innerWidth={dims['iw']}")
+            if dims["pageSH"] > dims["pageCH"]:
+                failures.append(f"SCROLL(PAGE-V) {label}: scrollHeight={dims['pageSH']} > clientHeight={dims['pageCH']}")
+            if dims["pageSW"] > dims["pageCW"]:
+                failures.append(f"SCROLL(PAGE-H) {label}: scrollWidth={dims['pageSW']} > clientWidth={dims['pageCW']}")
+            if dims["cardSH"] > dims["cardCH"]:
+                failures.append(f"SCROLL(CARD-V) {label}: scrollHeight={dims['cardSH']} > clientHeight={dims['cardCH']}")
+            if dims["cardSW"] > dims["cardCW"]:
+                failures.append(f"SCROLL(CARD-H) {label}: scrollWidth={dims['cardSW']} > clientWidth={dims['cardCW']}")
 
-            # document.scrollHeight only catches page-level scroll. .card has
-            # overflow:hidden, so content that overflows THE CARD gets silently
-            # clipped without ever triggering page scroll — check containment
-            # explicitly so a clipped element (e.g. wrapped extras) is caught.
+            # Bounding-box check on top of the aggregate scrollHeight check
+            # above: pinpoints WHICH element pokes out and by how much.
             clipped = page.evaluate(
                 """() => {
                     const card = document.querySelector('.card').getBoundingClientRect();
@@ -374,6 +397,123 @@ def start_prefixed_server(directory, prefix):
     return httpd, port
 
 
+TEXT_SCALE_VIEWPORTS = [("360x560", 360, 560), ("375x548", 375, 548), ("390x664", 390, 664), ("393x700", 393, 700)]
+TEXT_SCALE_FACTORS = [125, 150]
+
+INTERACTIVE_SELECTORS = {
+    "WhatsApp": ".cta-whatsapp",
+    "LinkedIn": ".cta-linkedin",
+    "Adicionar contato": ".cta-vcf",
+    "GitHub": 'a[href*="github.com"]',
+    "E-mail": 'a[href^="mailto:"]',
+}
+
+
+def run_text_scale_scenario(playwright):
+    """Cenário 'texto-ampliado': html{font-size:125%/150%} simula a
+    preferência de "texto maior" do SO/navegador (accessibilidade), nos 4
+    viewports portrait com barra de navegador. Não exige zero scroll (o
+    .card pode rolar — é a rede de segurança) mas exige: zero overflow
+    horizontal, zero erro de console, e que os 5 elementos interativos
+    continuem alcançáveis por rolagem do cartão e clicáveis."""
+    name = "texto-ampliado"
+    print(f"\n=== Cenário: {name} ===")
+    tmp_dir, project, cfg, expect, sync_ok, sync_output = prepare_scenario("estado-atual")
+    failures = []
+    console_issues = []
+    evidence = []
+    shot_dir = OUT_DIR / name
+
+    if not sync_ok:
+        failures.append(f"SYNC: tools/sync.py falhou:\n{sync_output}")
+
+    port = free_port()
+    server = subprocess.Popen(
+        [sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1"],
+        cwd=project, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    try:
+        if not wait_for_server(port):
+            failures.append("SERVER: não respondeu a tempo")
+        else:
+            base_url = f"http://127.0.0.1:{port}/contacts/"
+            browser = playwright.chromium.launch()
+            try:
+                context = browser.new_context()
+                page = context.new_page()
+
+                def on_console(msg):
+                    if msg.type == "error":
+                        console_issues.append(f"{msg.type}: {msg.text}")
+
+                page.on("console", on_console)
+
+                for vp_name, w, h in TEXT_SCALE_VIEWPORTS:
+                    for lang in LANGS:
+                        for scale in TEXT_SCALE_FACTORS:
+                            label = f"{vp_name}/{lang}/{scale}%"
+                            page.set_viewport_size({"width": w, "height": h})
+                            page.goto(f"{base_url}?lang={lang}", wait_until="networkidle")
+                            page.add_style_tag(content=f"html {{ font-size: {scale}% !important; }}")
+                            page.wait_for_timeout(120)
+
+                            shot_dir.mkdir(parents=True, exist_ok=True)
+                            page.screenshot(path=str(shot_dir / f"{vp_name}_{lang}_{scale}.png"))
+
+                            m = page.evaluate(
+                                """() => {
+                                    const doc = document.documentElement;
+                                    const card = document.querySelector('.card');
+                                    return {
+                                        pageSW: doc.scrollWidth, pageCW: doc.clientWidth,
+                                        cardSW: card.scrollWidth, cardCW: card.clientWidth,
+                                        cardSH: card.scrollHeight, cardCH: card.clientHeight,
+                                    };
+                                }"""
+                            )
+                            if m["pageSW"] > m["pageCW"]:
+                                failures.append(f"HSCROLL(PAGE) {label}: scrollWidth={m['pageSW']} > clientWidth={m['pageCW']}")
+                            if m["cardSW"] > m["cardCW"]:
+                                failures.append(f"HSCROLL(CARD) {label}: scrollWidth={m['cardSW']} > clientWidth={m['cardCW']}")
+                            v_scroll = m["cardSH"] - m["cardCH"]
+                            evidence.append(
+                                f"{label}: card scrollHeight={m['cardSH']} clientHeight={m['cardCH']} "
+                                f"({'rola ' + str(v_scroll) + 'px' if v_scroll > 0 else 'sem scroll'})"
+                            )
+
+                            for elem_name, sel in INTERACTIVE_SELECTORS.items():
+                                try:
+                                    page.locator(sel).first.click(trial=True, timeout=3000)
+                                except Exception as exc:
+                                    failures.append(
+                                        f"UNREACHABLE {label}: {elem_name} ({sel}) não ficou "
+                                        f"alcançável/clicável: {exc.__class__.__name__}"
+                                    )
+                context.close()
+            finally:
+                browser.close()
+    finally:
+        server.terminate()
+        try:
+            server.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            server.kill()
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    passed = not failures and not console_issues
+    print(f"  sync.py: {'OK' if sync_ok else 'FALHOU'}")
+    print(f"  console issues: {len(console_issues)}")
+    for c in console_issues[:10]:
+        print(f"    - {c}")
+    for ev in evidence:
+        print(f"  {ev}")
+    print(f"  failures: {len(failures)}")
+    for f in failures:
+        print(f"    FAIL: {f}")
+    print(f"  RESULT: {'PASS' if passed else 'FAIL'}")
+    return passed
+
+
 def run_scenario(name, playwright, prefix=None):
     print(f"\n=== Cenário: {name} ===")
     tmp_dir, project, cfg, expect, sync_ok, sync_output = prepare_scenario(name)
@@ -467,6 +607,7 @@ def main():
     with sync_playwright() as p:
         for name, prefix in scenario_specs:
             results[name] = run_scenario(name, p, prefix=prefix)
+        results["texto-ampliado"] = run_text_scale_scenario(p)
 
     print("\n=== RESUMO ===")
     for name, ok in results.items():

@@ -48,15 +48,20 @@
     --gap-outer: clamp(6px, 2vh, 14px);
     --gap-y: clamp(6px, 1.5vh, 12px);
     --pad-x: clamp(14px, 5vw, 22px);
-    --fs-handle: clamp(10px, 2.6vw, 12px);
-    --fs-toggle: clamp(11px, 2.8vw, 12px);
-    --fs-h1: clamp(20px, 5.2vw, 26px);
-    --fs-role: clamp(11px, 3vw, 13px);
-    --fs-location: clamp(10px, 2.8vw, 12px);
-    --fs-bio: clamp(12px, 3.2vw, 13.5px);
-    --fs-chip: clamp(10px, 2.6vw, 11.5px);
-    --fs-cta: clamp(13px, 3.6vw, 15px);
-    --fs-secondary: clamp(11px, 2.8vw, 13px);
+    /* Limites em rem (não px): escalam com a preferência de tamanho de
+       fonte do usuário (html{font-size:125%/150%} simula "texto maior"
+       do SO/navegador). O termo fluido em vw fica como está — é sobre
+       espaço de tela, não sobre a preferência de fonte. Em 100% (padrão),
+       1rem=16px e os valores computados são idênticos aos px anteriores. */
+    --fs-handle: clamp(0.625rem, 2.6vw, 0.75rem);
+    --fs-toggle: clamp(0.6875rem, 2.8vw, 0.75rem);
+    --fs-h1: clamp(1.25rem, 5.2vw, 1.625rem);
+    --fs-role: clamp(0.6875rem, 3vw, 0.8125rem);
+    --fs-location: clamp(0.625rem, 2.8vw, 0.75rem);
+    --fs-bio: clamp(0.75rem, 3.2vw, 0.84375rem);
+    --fs-chip: clamp(0.625rem, 2.6vw, 0.71875rem);
+    --fs-cta: clamp(0.8125rem, 3.6vw, 0.9375rem);
+    --fs-secondary: clamp(0.6875rem, 2.8vw, 0.8125rem);
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
@@ -91,7 +96,8 @@
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .card-bar {
     flex: 0 0 auto;
@@ -261,13 +267,13 @@
     :root {
       --gap-outer: clamp(3px, 1.2vh, 8px);
       --gap-y: clamp(2px, 0.8vh, 6px);
-      --fs-h1: clamp(15px, 4.2vw, 18px);
-      --fs-role: clamp(9.5px, 2.4vw, 11px);
-      --fs-location: clamp(8.5px, 2.2vw, 10px);
-      --fs-bio: clamp(10px, 2.4vw, 11.5px);
-      --fs-chip: clamp(8.5px, 2vw, 10px);
-      --fs-cta: clamp(11px, 2.8vw, 13px);
-      --fs-secondary: clamp(9.5px, 2.2vw, 11px);
+      --fs-h1: clamp(0.9375rem, 4.2vw, 1.125rem);
+      --fs-role: clamp(0.59375rem, 2.4vw, 0.6875rem);
+      --fs-location: clamp(0.53125rem, 2.2vw, 0.625rem);
+      --fs-bio: clamp(0.625rem, 2.4vw, 0.71875rem);
+      --fs-chip: clamp(0.53125rem, 2vw, 0.625rem);
+      --fs-cta: clamp(0.6875rem, 2.8vw, 0.8125rem);
+      --fs-secondary: clamp(0.59375rem, 2.2vw, 0.6875rem);
     }
     .identity { gap: 1px; }
     .bio { line-height: 1.2; }
