@@ -53,15 +53,15 @@
        do SO/navegador). O termo fluido em vw fica como está — é sobre
        espaço de tela, não sobre a preferência de fonte. Em 100% (padrão),
        1rem=16px e os valores computados são idênticos aos px anteriores. */
-    --fs-handle: clamp(0.625rem, 2.6vw, 0.75rem);
-    --fs-toggle: clamp(0.6875rem, 2.8vw, 0.75rem);
-    --fs-h1: clamp(1.25rem, 5.2vw, 1.625rem);
-    --fs-role: clamp(0.6875rem, 3vw, 0.8125rem);
-    --fs-location: clamp(0.625rem, 2.8vw, 0.75rem);
-    --fs-bio: clamp(0.75rem, 3.2vw, 0.84375rem);
-    --fs-chip: clamp(0.625rem, 2.6vw, 0.71875rem);
-    --fs-cta: clamp(0.8125rem, 3.6vw, 0.9375rem);
-    --fs-secondary: clamp(0.6875rem, 2.8vw, 0.8125rem);
+    --fs-handle: clamp(0.5625rem, 2.3vw, 0.6875rem);
+    --fs-toggle: clamp(0.625rem, 2.5vw, 0.6875rem);
+    --fs-h1: clamp(1.125rem, 4.6vw, 1.4375rem);
+    --fs-role: clamp(0.625rem, 2.7vw, 0.71875rem);
+    --fs-location: clamp(0.5625rem, 2.5vw, 0.6875rem);
+    --fs-bio: clamp(0.6875rem, 2.9vw, 0.78125rem);
+    --fs-chip: clamp(0.5625rem, 2.3vw, 0.65625rem);
+    --fs-cta: clamp(0.75rem, 3.2vw, 0.84375rem);
+    --fs-secondary: clamp(0.625rem, 2.5vw, 0.75rem);
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
@@ -147,25 +147,23 @@
     inset: 0;
     overflow: hidden;
   }
-  /* Overlay: dissolve só nas bordas — deixa camiseta visível no terço baixo. */
+  /* Overlay: só o degradê de cima/baixo (funde com a card-bar e o
+     name-block) — SEM gradiente radial. Um oval centrado na cabeça aqui
+     escurecia a poeira em direção às bordas e criava leitura de "retrato
+     emoldurado"; a poeira (densidade chapada) e a máscara própria do
+     retrato nítido já cuidam do resto sozinhas. */
   .portrait-slot::after {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background:
-      radial-gradient(ellipse 110% 105% at 50% 32%,
-        transparent 48%,
-        rgba(21, 16, 31, 0.22) 72%,
-        rgba(21, 16, 31, 0.7) 90%,
-        var(--surface) 100%),
-      linear-gradient(to bottom,
-        var(--surface) 0%,
-        transparent 6%,
-        transparent 78%,
-        rgba(21, 16, 31, 0.55) 92%,
-        var(--surface) 100%);
+    background: linear-gradient(to bottom,
+      rgba(21, 16, 31, 0.8) 0%,
+      transparent 8%,
+      transparent 76%,
+      rgba(21, 16, 31, 0.45) 92%,
+      rgba(21, 16, 31, 0.8) 100%);
   }
   .portrait-ascii {
     position: absolute;
@@ -185,24 +183,10 @@
     transform-origin: top left;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    z-index: 0;
-    /* Máscara bem aberta — ombros/camiseta não viram oval de cabeça. */
-    -webkit-mask-image: radial-gradient(ellipse 135% 125% at 50% 36%,
-      #000 55%, rgba(0, 0, 0, 0.7) 78%, transparent 100%);
-    mask-image: radial-gradient(ellipse 135% 125% at 50% 36%,
-      #000 55%, rgba(0, 0, 0, 0.7) 78%, transparent 100%);
-  }
-  /* Halo desfocado atrás — blur real ao redor da silhueta. */
-  .portrait-ascii--blur {
-    z-index: 0;
-    opacity: 0.5;
-    filter: blur(12px);
-    -webkit-mask-image: none;
-    mask-image: none;
-    pointer-events: none;
-  }
-  .portrait-ascii:not(.portrait-ascii--blur) {
     z-index: 1;
+    /* Sem mask-image: retrato e poeira são a mesma passada de texto (ver
+       ascii-art.js) — o fade perto da borda já está nos caracteres em si,
+       uma máscara CSS por cima só duplicava o degradê. */
   }
   .portrait-fallback {
     width: 100%;
@@ -453,7 +437,7 @@
 
 <!-- sync:start:ascii-script -->
 <!-- tools/sync.py descomenta esta linha sozinho quando "photo" existe em card.config.json. -->
-<script src="../ascii-photo.js?v=64"></script>
+<script src="../ascii-photo.js"></script>
 <!-- sync:end:ascii-script -->
 <script src="../ascii-art.js?v=64"></script>
 <script>
